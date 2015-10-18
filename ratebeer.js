@@ -43,5 +43,37 @@ var rb = module.exports = {
       }).reverse();
       cb(null, sorted[0]);
     });
+  },
+  getBeer: function(q, cb) {
+    rb.search(q, function(e, beer) {
+      if (e) return cb(e);
+      else if (beer == null) return cb();
+      else rb.getBeerByUrl(beer.url, cb);
+    });
+  },
+  getBeerByUrl: function(url, cb) {
+    request({
+      url: 'http://www.ratebeer.com' + url,
+      encoding: 'binary'
+    }, function(err, response, html) {
+      if (err) return cb(err);
+      var $ = cheerio.load(decodePage(html));
+      var beerInfo = {}
+
+      var ratings = _.chain($('span[itemprop=rating] span')).map(function(span) {
+        return parseInt($(span).text())
+      }).filter(function(parseResult) {
+        return !isNaN(parseResult) && parseResult >= 0 && parseResult <= 100
+      }).value();
+
+      if (ratings.length > 2) {
+        return cb(new Error("Ambiguous result when parsing ratings, found more than two possible ratings: " + ratings.join(', ')));
+      }
+
+      beerInfo.ratingOverall = ratings[0];
+      beerInfo.ratingStyle = ratings[1];
+
+      cb(null, beerInfo);
+    })
   }
 };
