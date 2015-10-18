@@ -13,6 +13,8 @@ function decodePage(html) {
   return utf8.decode(buf.toString())
 }
 
+var scrapeConfusionMessage = "This could be indicative that RateBeer has changed their layout and that this library needs an update. Please leave an issue on github!";
+
 var rb = module.exports = {
   searchAll: function(q, cb) {
     var q = escape(q.replace(' ', '+'))
@@ -68,12 +70,22 @@ var rb = module.exports = {
         return !isNaN(parseResult) && parseResult >= 0 && parseResult <= 100
       }).value();
 
-      if (ratings.length > 2) {
-        return cb(new Error("Ambiguous result when parsing ratings, found more than two possible ratings: " + ratings.join(', ')));
+      if (ratings.length != 2) {
+        return cb(new Error("Ambiguous result when parsing ratings: [" + ratings.join(', ') + "]." + scrapeConfusionMessage));
       }
 
       beerInfo.ratingOverall = ratings[0];
       beerInfo.ratingStyle = ratings[1];
+
+      var titlePlate = $('big').first()
+      
+      if (!titlePlate.text().match(/^Brewed by/)) {
+        return cb(new Error("Page consistency check failed. " + scrapeConfusionMessage));
+      }
+
+      titlePlate = titlePlate.parent();
+      beerInfo.brewery = titlePlate.find('big b a').text();
+      beerInfo.style = titlePlate.children('a').first().text();
 
       cb(null, beerInfo);
     })
