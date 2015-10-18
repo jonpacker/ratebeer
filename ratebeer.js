@@ -86,6 +86,7 @@ var rb = module.exports = {
       titlePlate = titlePlate.parent();
       beerInfo.brewery = titlePlate.find('big b a').text();
       beerInfo.style = titlePlate.children('a').first().text();
+      try { beerInfo.location = titlePlate.find('br:last-child')[0].nextSibling.data.trim() } catch(e){}
 
       cb(null, beerInfo);
     })
