@@ -96,6 +96,9 @@ var rb = module.exports = {
       var abv = $('[title~=Alcohol]').next('big').text();
       if (abv) beerInfo.abv = parseFloat(abv);
 
+      var desc = $('[itemprop=count]').parents('div').first().next().text();
+      if (desc) beerInfo.desc = desc.replace(/^COMMERCIAL DESCRIPTION/, '');
+
       cb(null, beerInfo);
     })
   }
