@@ -7,6 +7,12 @@ var utf8 = require('utf8');
 
 var map = Array.prototype.map;
 
+var ic = new iconv.Iconv('iso-8859-1', 'utf-8');
+function decodePage(html) {
+  var buf = ic.convert(html);
+  return utf8.decode(buf.toString())
+}
+
 var rb = module.exports = {
   searchAll: function(q, cb) {
     var q = escape(q.replace(' ', '+'))
@@ -17,14 +23,12 @@ var rb = module.exports = {
       encoding: 'binary'
     }, function(err, response, html) {
       if (err) return cb(err);
-      var ic = new iconv.Iconv('iso-8859-1', 'utf-8');
-      var buf = ic.convert(html);
-      var $ = cheerio.load(buf.toString());
+      var $ = cheerio.load(decodePage(html));
       var result = $('table').first().find('td:first-child a').map(function() {
         var beer = $(this);
         return {
-          name: utf8.decode(beer.text().trim()),
-          url: utf8.decode(beer.attr('href'))
+          name: beer.text().trim(),
+          url: beer.attr('href')
         };
       });
       result = [].slice.apply(result)
