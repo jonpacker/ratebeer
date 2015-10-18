@@ -58,7 +58,9 @@ var rb = module.exports = {
     }, function(err, response, html) {
       if (err) return cb(err);
       var $ = cheerio.load(decodePage(html));
-      var beerInfo = {}
+      var beerInfo = {
+        name: $('[itemprop=itemreviewed]').text()
+      }
 
       var ratings = _.chain($('span[itemprop=rating] span')).map(function(span) {
         return parseInt($(span).text())
