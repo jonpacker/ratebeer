@@ -90,7 +90,14 @@ var rb = module.exports = {
       beerInfo.style = titlePlate.children('a').first().text();
       try { beerInfo.location = titlePlate.find('br:last-child')[0].nextSibling.data.trim() } catch(e){}
 
+      var ibus = $('[title~=Bittering]').next('big').text();
+      if (ibus) beerInfo.ibu = parseInt(ibus);
+
+      var abv = $('[title~=Alcohol]').next('big').text();
+      if (abv) beerInfo.abv = parseFloat(abv);
+
       cb(null, beerInfo);
     })
   }
 };
+
