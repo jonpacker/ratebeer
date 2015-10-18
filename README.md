@@ -39,6 +39,12 @@ one. If `err` is undefined, `result` will always be an array.
 Get all the information for a particular beer that ratebeer has available. This
 will search the name of the beer first, so you may be unspecific.
 
+**Note: ratebeer's page formatting is really oldschool and uses almost no CSS
+selectors or element IDs, so a ton of this scraping is very dependent on their
+layout staying exactly the same. It is not very resistant to change. It should
+give you a good error if things don't look right, but that's not certain. Use
+this function defensively.**
+
 Example result:
 
 ```
