@@ -99,6 +99,9 @@ var rb = module.exports = {
       var desc = $('[itemprop=count]').parents('div').first().next().text();
       if (desc) beerInfo.desc = desc.replace(/^COMMERCIAL DESCRIPTION/, '');
 
+      var img = $('#beerImg').parent().attr('href');
+      if (!img.match(/post\.asp/)) beerInfo.image = img;
+
       cb(null, beerInfo);
     })
   }
