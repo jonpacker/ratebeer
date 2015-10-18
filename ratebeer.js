@@ -72,12 +72,10 @@ var rb = module.exports = {
         return !isNaN(parseResult) && parseResult >= 0 && parseResult <= 100
       }).value();
 
-      if (ratings.length != 2) {
-        return cb(new Error("Ambiguous result when parsing ratings: [" + ratings.join(', ') + "]." + scrapeConfusionMessage));
+      if (ratings.length == 2) {
+        beerInfo.ratingOverall = ratings[0];
+        beerInfo.ratingStyle = ratings[1];
       }
-
-      beerInfo.ratingOverall = ratings[0];
-      beerInfo.ratingStyle = ratings[1];
 
       var titlePlate = $('big').first()
       
