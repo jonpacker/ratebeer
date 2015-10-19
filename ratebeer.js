@@ -79,12 +79,14 @@ var rb = module.exports = {
 
       var titlePlate = $('big').first()
       
-      if (!titlePlate.text().match(/^Brewed by/)) {
+      if (!titlePlate.text().match(/Brewed (by|at)/)) {
         return cb(new Error("Page consistency check failed. " + scrapeConfusionMessage));
       }
 
       titlePlate = titlePlate.parent();
       beerInfo.brewery = titlePlate.find('big b a').text();
+      var brewedAt = titlePlate.find('big > a').text();
+      if (brewedAt) beerInfo.brewedAt = brewedAt;
       beerInfo.style = titlePlate.children('a').first().text();
       try { beerInfo.location = titlePlate.find('br:last-child')[0].nextSibling.data.trim() } catch(e){}
 
