@@ -40,6 +40,7 @@ var rb = module.exports = {
   search: function(q, cb) {
     rb.searchAll(q, function(e, result) {
       if (e) return cb(e);
+      if (!result || result.length == 0) return _googleFallbackSearch(q,cb);
       var sorted = _.sortBy(result, function(beer) {
         return similarity.compareTwoStrings(q, beer.name);
       }).reverse();
@@ -107,3 +108,14 @@ var rb = module.exports = {
   }
 };
 
+var google = require('google');
+var url = require('url');
+var _googleFallbackSearch = function(q, cb) {
+  google.resultsPerPage = 1;
+  google(q + ' site:ratebeer.com', function(err, next, links) {
+    if (err) return cb(err);
+    if (!links[0].link.match(/com\/beer\//)) return cb();
+    var urlComponents = url.parse(links[0].link);
+    cb(null, { name: q, url: urlComponents.path });
+  });
+};
