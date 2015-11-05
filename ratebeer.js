@@ -114,6 +114,7 @@ var _googleFallbackSearch = function(q, cb) {
   google.resultsPerPage = 1;
   google(q + ' site:ratebeer.com', function(err, next, links) {
     if (err) return cb(err);
+    if (!links.length) return cb();
     if (!links[0].link.match(/com\/beer\//)) return cb();
     var urlComponents = url.parse(links[0].link);
     cb(null, { name: q, url: urlComponents.path });
