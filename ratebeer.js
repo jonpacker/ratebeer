@@ -80,7 +80,8 @@ var rb = module.exports = {
 
       var titlePlate = $('big').first()
       
-      if (!titlePlate.text().match(/Brewed (by|at)/)) {
+      console.log(titlePlate.text())
+      if (!titlePlate.text().match(/brewed (by|at)/i)) {
         return cb(new Error("Page consistency check failed. " + scrapeConfusionMessage));
       }
 
