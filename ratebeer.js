@@ -48,7 +48,7 @@ var rb = module.exports = {
     });
   },
   getBeer: function(q, cb) {
-    rb.search(q, function(e, beer) {
+    _googleFallbackSearch(q, function(e, beer) {
       if (e) return cb(e);
       else if (beer == null) return cb();
       else rb.getBeerByUrl(beer.url, cb);
@@ -80,7 +80,6 @@ var rb = module.exports = {
 
       var titlePlate = $('big').first()
       
-      console.log(titlePlate.text())
       if (!titlePlate.text().match(/brewed (by|at)/i)) {
         return cb(new Error("Page consistency check failed. " + scrapeConfusionMessage));
       }
