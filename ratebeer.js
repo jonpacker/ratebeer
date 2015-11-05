@@ -48,7 +48,7 @@ var rb = module.exports = {
     });
   },
   getBeer: function(q, cb) {
-    _googleFallbackSearch(q, function(e, beer) {
+    rb.search(q, function(e, beer) {
       if (e) return cb(e);
       else if (beer == null) return cb();
       else rb.getBeerByUrl(beer.url, cb);
