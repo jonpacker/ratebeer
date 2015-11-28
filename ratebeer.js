@@ -40,7 +40,7 @@ var rb = module.exports = {
   search: function(q, cb) {
     rb.searchAll(q, function(e, result) {
       if (e) return cb(e);
-      if (!result || result.length == 0) return _googleFallbackSearch(q,cb);
+      if (!result || result.length == 0) return cb();
       var sorted = _.sortBy(result, function(beer) {
         return similarity.compareTwoStrings(q, beer.name);
       }).reverse();
