@@ -8,9 +8,20 @@ var utf8 = require('utf8');
 var map = Array.prototype.map;
 
 var ic = new iconv.Iconv('iso-8859-1', 'utf-8');
+
 function decodePage(html) {
   var buf = ic.convert(html);
   return utf8.decode(buf.toString())
+}
+
+function extractRating($, ratingType) {
+  return $('span:contains("' + ratingType + '")').parent().contents().filter(function() {
+    if (this.nodeType === 3) {
+      var parseResult = parseInt(this.nodeValue);
+      return !isNaN(parseResult) && parseResult >= 0 && parseResult <= 100;
+    }
+    return false;
+  });
 }
 
 var scrapeConfusionMessage = "This could be indicative that RateBeer has changed their layout and that this library needs an update. Please leave an issue on github!";
@@ -61,22 +72,17 @@ var rb = module.exports = {
     }, function(err, response, html) {
       if (err) return cb(err);
       var $ = cheerio.load(decodePage(html));
+
+      // Parse basic beer information
       var beerInfo = {
         name: $('[itemprop=name]').text(),
-        ratingsCount: parseInt($('[itemprop=count]').text()),
+        ratingsCount: parseInt($('[itemprop=reviewCount]').text()),
         ratingsWeightedAverage: parseFloat($('[name="real average"] big strong').text())
-      }
+      };
 
-      var ratings = _.chain($('span[itemprop=rating] span')).map(function(span) {
-        return parseInt($(span).text())
-      }).filter(function(parseResult) {
-        return !isNaN(parseResult) && parseResult >= 0 && parseResult <= 100
-      }).value();
-
-      if (ratings.length == 2) {
-        beerInfo.ratingOverall = ratings[0];
-        beerInfo.ratingStyle = ratings[1];
-      }
+      // Parse overall and style rating
+      beerInfo.ratingOverall = parseInt(extractRating($, 'overall').text());
+      beerInfo.ratingStyle = parseInt(extractRating($, 'style').text());
 
       var titlePlate = $('big').first()
       
