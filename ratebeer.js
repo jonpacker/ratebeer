@@ -5,8 +5,6 @@ var request = require('request');
 var iconv = require('iconv');
 var utf8 = require('utf8');
 
-var map = Array.prototype.map;
-
 var ic = new iconv.Iconv('iso-8859-1', 'utf-8');
 
 function decodePage(html) {
